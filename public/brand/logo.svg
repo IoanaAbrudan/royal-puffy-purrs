@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 500" fill="none" role="img" aria-label="Royal Puffy Purrs — British Shorthair logo">
+  <defs>
+    <linearGradient id="frame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fce8f0"/>
+      <stop offset="100%" stop-color="#f8d4dc"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e8c547"/>
+      <stop offset="50%" stop-color="#f0d878"/>
+      <stop offset="100%" stop-color="#c9a227"/>
+    </linearGradient>
+    <linearGradient id="fur" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#9aa8b8"/>
+      <stop offset="45%" stop-color="#7d8fa3"/>
+      <stop offset="100%" stop-color="#6b7d92"/>
+    </linearGradient>
+    <linearGradient id="furLight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c5d0dc"/>
+      <stop offset="100%" stop-color="#a8b5c4"/>
+    </linearGradient>
+    <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e8a0b4" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#e8a0b4" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Decorative frame -->
+  <ellipse cx="210" cy="185" rx="168" ry="158" fill="url(#frame)" stroke="url(#gold)" stroke-width="7"/>
+  <ellipse cx="210" cy="185" rx="150" ry="140" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.55"/>
+
+  <!-- Laurel sprigs -->
+  <path d="M78 210c28-48 48-62 72-72M342 210c-28-48-48-62-72-72" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.75"/>
+  <ellipse cx="102" cy="158" rx="9" ry="13" fill="#e8a0b4" opacity="0.85" transform="rotate(-28 102 158)"/>
+  <ellipse cx="318" cy="158" rx="9" ry="13" fill="#e8a0b4" opacity="0.85" transform="rotate(28 318 158)"/>
+
+  <!-- Crown -->
+  <path d="M138 108h144l-14 34-22-16-20 24-20-24-22 16-14-34z" fill="url(#gold)" stroke="#b8891f" stroke-width="2"/>
+  <circle cx="162" cy="120" r="5" fill="#e8a0b4"/>
+  <circle cx="210" cy="112" r="6" fill="#fff9f5"/>
+  <circle cx="258" cy="120" r="5" fill="#e8a0b4"/>
+
+  <!-- British Shorthair ears — small, rounded -->
+  <path d="M132 152c8-28 24-42 38-36 6 3 10 12 12 22l-24 18z" fill="url(#fur)"/>
+  <path d="M288 152c-8-28-24-42-38-36-6 3-10 12-12 22l24 18z" fill="url(#fur)"/>
+  <path d="M148 142c4-14 12-22 18-18 3 2 5 8 6 14l-16 10z" fill="#c5b0b8"/>
+
+  <!-- Head — round BSH shape -->
+  <circle cx="210" cy="205" r="82" fill="url(#fur)"/>
+  <ellipse cx="210" cy="215" rx="68" ry="62" fill="url(#furLight)"/>
+  <circle cx="210" cy="220" r="72" fill="url(#cheek)"/>
+
+  <!-- Eyes — large copper BSH eyes -->
+  <ellipse cx="176" cy="198" rx="17" ry="19" fill="#fff9f5"/>
+  <ellipse cx="244" cy="198" rx="17" ry="19" fill="#fff9f5"/>
+  <circle cx="178" cy="200" r="11" fill="#c47a20"/>
+  <circle cx="246" cy="200" r="11" fill="#c47a20"/>
+  <circle cx="180" cy="196" r="4" fill="#fff9f5"/>
+  <circle cx="248" cy="196" r="4" fill="#fff9f5"/>
+  <path d="M168 192c6-4 12-4 16 0M236 192c6-4 12-4 16 0" stroke="#6b4c8a" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+
+  <!-- Nose — short BSH muzzle -->
+  <ellipse cx="210" cy="222" rx="10" ry="7" fill="#d4a0a8"/>
+  <path d="M210 228v6M202 236c4 5 8 5 12 0M210 234c4 5 8 5 12 0" stroke="#8a7080" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+  <!-- Whiskers -->
+  <path d="M118 205h42M118 218h38M302 205h-42M302 218h-38" stroke="#fff9f5" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- Plush chest fluff -->
+  <ellipse cx="210" cy="278" rx="48" ry="22" fill="url(#furLight)" opacity="0.9"/>
+
+  <!-- Name plaque -->
+  <rect x="58" y="322" width="304" height="88" rx="18" fill="#fff9f5" stroke="url(#gold)" stroke-width="5"/>
+  <path d="M42 348c10-16 24-24 40-24h256c16 0 30 8 40 24" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.45"/>
+
+  <text x="210" y="362" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="700" fill="url(#gold)">Royal</text>
+  <text x="210" y="392" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" font-weight="600" fill="#6b4c8a" letter-spacing="3">Puffy Purrs</text>
+
+  <!-- Paw heart -->
+  <circle cx="210" cy="438" r="16" fill="#e8a0b4"/>
+  <path d="M210 431c-2.5-4-7-4-8.5 0-1.5 3.5 4 7 8.5 10.5 4.5-3.5 10-7 8.5-10.5-1.5-4-6-4-8.5 0z" fill="#fff9f5"/>
+</svg>

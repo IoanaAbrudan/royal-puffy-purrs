@@ -1,0 +1,12 @@
+{
+  "codeConnect": {
+    "parser": "react",
+    "include": ["components/**/*.figma.ts"],
+    "paths": {
+      "@/*": ["./"]
+    },
+    "importPaths": {
+      "components/ui/*": "@/components/ui/*"
+    }
+  }
+}
