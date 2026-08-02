@@ -6,7 +6,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://royalpuffypurrs.com",
   contact: {
     email: "cattery@royalpuffypurrs.com",
-    phone: "+44 20 7946 0958",
+    phone: "07575 444336",
     address: "SS13, Basildon",
   },
   logo: {
@@ -73,7 +73,7 @@ export const ctaContent = {
   description:
     "Book a suite for your next trip or join the waitlist for our upcoming kittens. We reply within one business day.",
   primary: { label: "Get in touch", href: "/contact" },
-  secondary: { label: "Call us", href: "tel:+442079460958" },
+  secondary: { label: "Call us", href: "tel:+447575444336" },
 } as const;
 
 export const aboutContent = {
