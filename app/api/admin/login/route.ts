@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 
   if (!process.env.ADMIN_PASSWORD) {
     return NextResponse.json(
-      { error: "Admin login is not configured. Set ADMIN_PASSWORD in .env.local." },
+      { error: "Sign-in is temporarily unavailable. Please try again later." },
       { status: 503 },
     );
   }

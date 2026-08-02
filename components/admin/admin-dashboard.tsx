@@ -27,14 +27,25 @@ export function AdminDashboard() {
 
   const loadStore = useCallback(async () => {
     setLoading(true);
-    const response = await fetch("/api/admin/hotel", { credentials: "same-origin" });
-    if (response.status === 401) {
-      router.push("/admin/login");
-      return;
+    setError(null);
+    try {
+      const response = await fetch("/api/admin/hotel", { credentials: "same-origin" });
+      if (response.status === 401) {
+        router.push("/admin/login");
+        return;
+      }
+      if (!response.ok) {
+        const data = (await response.json().catch(() => ({}))) as { error?: string };
+        setError(data.error ?? "Could not load admin data. Please try again.");
+        return;
+      }
+      const data = (await response.json()) as HotelStoreData;
+      setStore(data);
+    } catch {
+      setError("Could not load admin data. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    const data = (await response.json()) as HotelStoreData;
-    setStore(data);
-    setLoading(false);
   }, [router]);
 
   useEffect(() => {
@@ -184,8 +195,21 @@ export function AdminDashboard() {
     await loadStore();
   }
 
-  if (loading || !store) {
+  if (loading) {
     return <p className="text-muted-foreground">Loading admin…</p>;
+  }
+
+  if (!store) {
+    return (
+      <div className="space-y-4">
+        <p className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error ?? "Could not load admin data. Please try again."}
+        </p>
+        <Button variant="outline" onClick={() => void loadStore()}>
+          Retry
+        </Button>
+      </div>
+    );
   }
 
   return (

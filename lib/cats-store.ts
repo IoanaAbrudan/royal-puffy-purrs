@@ -26,28 +26,33 @@ function defaultStore(): CatsStoreData {
   };
 }
 
-async function ensureDataFile() {
-  await mkdir(DATA_DIR, { recursive: true });
+async function readStore(): Promise<CatsStoreData> {
   try {
-    await readFile(DATA_FILE, "utf8");
+    const raw = await readFile(DATA_FILE, "utf8");
+    const parsed = JSON.parse(raw) as CatsStoreData;
+
+    const seen = new Set<string>();
+    parsed.cats = parsed.cats.filter((cat) => {
+      if (seen.has(cat.id)) return false;
+      seen.add(cat.id);
+      return true;
+    });
+
+    return parsed;
   } catch {
-    await writeFile(DATA_FILE, JSON.stringify(defaultStore(), null, 2), "utf8");
+    const defaults = defaultStore();
+    try {
+      await mkdir(DATA_DIR, { recursive: true });
+      await writeFile(DATA_FILE, JSON.stringify(defaults, null, 2), "utf8");
+    } catch {
+      // Vercel and other read-only environments use bundled defaults in memory.
+    }
+    return defaults;
   }
 }
 
-async function readStore(): Promise<CatsStoreData> {
-  await ensureDataFile();
-  const raw = await readFile(DATA_FILE, "utf8");
-  const parsed = JSON.parse(raw) as CatsStoreData;
-
-  const seen = new Set<string>();
-  parsed.cats = parsed.cats.filter((cat) => {
-    if (seen.has(cat.id)) return false;
-    seen.add(cat.id);
-    return true;
-  });
-
-  return parsed;
+async function ensureDataFile() {
+  await readStore();
 }
 
 async function writeStore(data: CatsStoreData) {

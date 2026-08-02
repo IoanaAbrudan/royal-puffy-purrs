@@ -32,15 +32,24 @@ export function CatsAdminSection({
 
   const loadStore = useCallback(async () => {
     setLoading(true);
-    const response = await fetch("/api/admin/cats", { credentials: "same-origin" });
-    if (response.status === 401) {
-      onUnauthorized();
-      return;
+    try {
+      const response = await fetch("/api/admin/cats", { credentials: "same-origin" });
+      if (response.status === 401) {
+        onUnauthorized();
+        return;
+      }
+      if (!response.ok) {
+        onError("Could not load cats data. Please try again.");
+        return;
+      }
+      const data = (await response.json()) as CatsStoreData;
+      setStore(data);
+    } catch {
+      onError("Could not load cats data. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    const data = (await response.json()) as CatsStoreData;
-    setStore(data);
-    setLoading(false);
-  }, [onUnauthorized]);
+  }, [onError, onUnauthorized]);
 
   useEffect(() => {
     void loadStore();

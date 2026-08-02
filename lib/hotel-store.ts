@@ -43,28 +43,33 @@ function defaultStore(): HotelStoreData {
   };
 }
 
-async function ensureDataFile() {
-  await mkdir(DATA_DIR, { recursive: true });
+async function readStore(): Promise<HotelStoreData> {
   try {
-    await readFile(DATA_FILE, "utf8");
+    const raw = await readFile(DATA_FILE, "utf8");
+    const parsed = JSON.parse(raw) as HotelStoreData;
+
+    const seen = new Set<string>();
+    parsed.suites = parsed.suites.filter((suite) => {
+      if (seen.has(suite.id)) return false;
+      seen.add(suite.id);
+      return true;
+    });
+
+    return parsed;
   } catch {
-    await writeFile(DATA_FILE, JSON.stringify(defaultStore(), null, 2), "utf8");
+    const defaults = defaultStore();
+    try {
+      await mkdir(DATA_DIR, { recursive: true });
+      await writeFile(DATA_FILE, JSON.stringify(defaults, null, 2), "utf8");
+    } catch {
+      // Vercel and other read-only environments use bundled defaults in memory.
+    }
+    return defaults;
   }
 }
 
-async function readStore(): Promise<HotelStoreData> {
-  await ensureDataFile();
-  const raw = await readFile(DATA_FILE, "utf8");
-  const parsed = JSON.parse(raw) as HotelStoreData;
-
-  const seen = new Set<string>();
-  parsed.suites = parsed.suites.filter((suite) => {
-    if (seen.has(suite.id)) return false;
-    seen.add(suite.id);
-    return true;
-  });
-
-  return parsed;
+async function ensureDataFile() {
+  await readStore();
 }
 
 async function suiteImageExists(imagePath: string) {
