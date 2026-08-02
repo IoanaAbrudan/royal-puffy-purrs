@@ -1,3 +1,9 @@
+export type HotelSuiteImage = {
+  image: string;
+  imageAlt: string;
+  objectPosition: string;
+};
+
 export type HotelSuite = {
   id: string;
   title: string;
@@ -6,6 +12,13 @@ export type HotelSuite = {
   image: string;
   imageAlt: string;
   objectPosition: string;
+  images: readonly HotelSuiteImage[];
+};
+
+export type HotelSuiteImageRecord = {
+  imagePath: string;
+  imageAlt: string;
+  objectPosition?: string;
 };
 
 export type HotelSuiteRecord = {
@@ -16,6 +29,7 @@ export type HotelSuiteRecord = {
   imagePath: string;
   imageAlt: string;
   objectPosition: string;
+  images?: HotelSuiteImageRecord[];
 };
 
 const defaultSuites: HotelSuiteRecord[] = [
@@ -33,6 +47,32 @@ const defaultSuites: HotelSuiteRecord[] = [
     imageAlt:
       "Garden view suite with wooden climbing bridge and outdoor light through glass doors",
     objectPosition: "center 45%",
+    images: [
+      {
+        imagePath: "/hotel/garden-suite-exterior.jpg",
+        imageAlt:
+          "Garden view suite exterior with flower boxes and warm evening light",
+        objectPosition: "center",
+      },
+      {
+        imagePath: "/hotel/garden-suite-hallway.jpg",
+        imageAlt:
+          "Garden view suite corridor with private glass-front rooms and garden outlook",
+        objectPosition: "center",
+      },
+      {
+        imagePath: "/hotel/garden-suite-interior.jpg",
+        imageAlt:
+          "Garden view suite interior with designer cat tree, wooden walls, and feeding station",
+        objectPosition: "center",
+      },
+      {
+        imagePath: "/hotel/garden-suite.jpg",
+        imageAlt:
+          "Garden view suite with wooden climbing shelves, suspension bridge, mesh-safe doors, and light wood flooring",
+        objectPosition: "center 45%",
+      },
+    ],
   },
   {
     id: "deluxe-suite",

@@ -38,6 +38,7 @@ function defaultStore(): HotelStoreData {
       imagePath: suite.imagePath,
       imageAlt: suite.imageAlt,
       objectPosition: suite.objectPosition,
+      ...(suite.images ? { images: suite.images.map((image) => ({ ...image })) } : {}),
     })),
   };
 }
@@ -85,14 +86,34 @@ export function toPublicSuite(
   suite: HotelSuiteRecord,
   imageVersion: number,
 ): HotelSuite {
+  const imageSources =
+    suite.images && suite.images.length > 0
+      ? suite.images
+      : [
+          {
+            imagePath: suite.imagePath,
+            imageAlt: suite.imageAlt,
+            objectPosition: suite.objectPosition,
+          },
+        ];
+
+  const images = imageSources.map((item) => ({
+    image: `${item.imagePath}?v=${imageVersion}`,
+    imageAlt: item.imageAlt,
+    objectPosition: item.objectPosition ?? suite.objectPosition,
+  }));
+
+  const primary = images[0];
+
   return {
     id: suite.id,
     title: suite.title,
     description: suite.description,
     highlights: suite.highlights,
-    image: `${suite.imagePath}?v=${imageVersion}`,
-    imageAlt: suite.imageAlt,
-    objectPosition: suite.objectPosition,
+    image: primary.image,
+    imageAlt: primary.imageAlt,
+    objectPosition: primary.objectPosition,
+    images,
   };
 }
 
@@ -104,9 +125,41 @@ export async function getHotelSuites(): Promise<{
   const suites: HotelSuite[] = [];
 
   for (const suite of store.suites) {
-    if (await suiteImageExists(suite.imagePath)) {
-      suites.push(toPublicSuite(suite, store.imageVersion));
+    const imageSources =
+      suite.images && suite.images.length > 0
+        ? suite.images
+        : [
+            {
+              imagePath: suite.imagePath,
+              imageAlt: suite.imageAlt,
+              objectPosition: suite.objectPosition,
+            },
+          ];
+
+    const images = [];
+    for (const item of imageSources) {
+      if (await suiteImageExists(item.imagePath)) {
+        images.push({
+          image: `${item.imagePath}?v=${store.imageVersion}`,
+          imageAlt: item.imageAlt,
+          objectPosition: item.objectPosition ?? suite.objectPosition,
+        });
+      }
     }
+
+    if (images.length === 0) continue;
+
+    const primary = images[0];
+    suites.push({
+      id: suite.id,
+      title: suite.title,
+      description: suite.description,
+      highlights: suite.highlights,
+      image: primary.image,
+      imageAlt: primary.imageAlt,
+      objectPosition: primary.objectPosition,
+      images,
+    });
   }
 
   return {

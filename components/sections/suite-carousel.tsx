@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { PawIcon } from "@/components/ui/cat-decorations";
 import { Button } from "@/components/ui/button";
@@ -22,19 +22,36 @@ type SuiteCarouselProps = {
 };
 
 export function SuiteCarousel({ suites }: SuiteCarouselProps) {
-  const [index, setIndex] = useState(0);
-  const suite = suites[index];
-  const total = suites.length;
+  const [suiteIndex, setSuiteIndex] = useState(0);
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const suite = suites[suiteIndex];
+  const photos = suite?.images ?? [];
+  const totalSuites = suites.length;
+  const totalPhotos = photos.length;
+  const activePhoto = photos[photoIndex] ?? photos[0];
+  const usesPhotoCarousel = totalPhotos > 1;
+
+  useEffect(() => {
+    setPhotoIndex(0);
+  }, [suiteIndex]);
 
   const goPrev = useCallback(() => {
-    setIndex((i) => (i === 0 ? total - 1 : i - 1));
-  }, [total]);
+    if (usesPhotoCarousel) {
+      setPhotoIndex((i) => (i === 0 ? totalPhotos - 1 : i - 1));
+      return;
+    }
+    setSuiteIndex((i) => (i === 0 ? totalSuites - 1 : i - 1));
+  }, [totalPhotos, totalSuites, usesPhotoCarousel]);
 
   const goNext = useCallback(() => {
-    setIndex((i) => (i === total - 1 ? 0 : i + 1));
-  }, [total]);
+    if (usesPhotoCarousel) {
+      setPhotoIndex((i) => (i === totalPhotos - 1 ? 0 : i + 1));
+      return;
+    }
+    setSuiteIndex((i) => (i === totalSuites - 1 ? 0 : i + 1));
+  }, [totalPhotos, totalSuites, usesPhotoCarousel]);
 
-  if (total === 0) {
+  if (totalSuites === 0) {
     return (
       <p className="mt-12 text-center text-muted-foreground">
         Suite photos coming soon.
@@ -50,7 +67,7 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
           variant="outline"
           size="icon"
           className="absolute -left-2 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full border-border/80 bg-card shadow-soft sm:-left-14"
-          aria-label="Previous room"
+          aria-label={usesPhotoCarousel ? "Previous photo" : "Previous room"}
           onClick={goPrev}
         >
           <ChevronLeft className="h-5 w-5" />
@@ -59,18 +76,20 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
         <Card className="overflow-hidden border-border/80 shadow-soft-lg">
           <div className="relative aspect-square w-full overflow-hidden bg-muted/25 sm:aspect-[5/4]">
             <Image
-              key={suite.id}
-              src={suite.image}
-              alt={suite.imageAlt}
+              key={`${suite.id}-${photoIndex}`}
+              src={activePhoto.image}
+              alt={activePhoto.imageAlt}
               fill
               quality={95}
               sizes="(max-width: 768px) 100vw, 672px"
               className="suite-photo object-contain p-2 sm:p-3"
-              style={{ objectPosition: "center" }}
-              priority={index === 0}
+              style={{ objectPosition: activePhoto.objectPosition }}
+              priority={suiteIndex === 0 && photoIndex === 0}
             />
             <span className="absolute right-3 top-3 rounded-full bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
-              {index + 1} / {total}
+              {usesPhotoCarousel
+                ? `${photoIndex + 1} / ${totalPhotos}`
+                : `${suiteIndex + 1} / ${totalSuites}`}
             </span>
           </div>
           <CardHeader>
@@ -106,7 +125,7 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
           variant="outline"
           size="icon"
           className="absolute -right-2 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full border-border/80 bg-card shadow-soft sm:-right-14"
-          aria-label="Next room"
+          aria-label={usesPhotoCarousel ? "Next photo" : "Next room"}
           onClick={goNext}
         >
           <ChevronRight className="h-5 w-5" />
@@ -116,22 +135,28 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
       <div
         className="mt-6 flex items-center justify-center gap-2"
         role="tablist"
-        aria-label="Choose a suite"
+        aria-label={usesPhotoCarousel ? "Choose a photo" : "Choose a suite"}
       >
-        {suites.map((s, i) => (
+        {(usesPhotoCarousel ? photos : suites).map((_, i) => (
           <button
-            key={s.id}
+            key={usesPhotoCarousel ? `${suite.id}-photo-${i}` : suites[i].id}
             type="button"
             role="tab"
-            aria-selected={i === index}
-            aria-label={s.title}
+            aria-selected={usesPhotoCarousel ? i === photoIndex : i === suiteIndex}
+            aria-label={
+              usesPhotoCarousel
+                ? `Photo ${i + 1} of ${suite.title}`
+                : suites[i].title
+            }
             className={cn(
               "h-2.5 rounded-full transition-all",
-              i === index
+              (usesPhotoCarousel ? i === photoIndex : i === suiteIndex)
                 ? "w-8 bg-primary"
                 : "w-2.5 bg-border hover:bg-accent",
             )}
-            onClick={() => setIndex(i)}
+            onClick={() =>
+              usesPhotoCarousel ? setPhotoIndex(i) : setSuiteIndex(i)
+            }
           />
         ))}
       </div>
