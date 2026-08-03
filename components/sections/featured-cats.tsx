@@ -1,7 +1,7 @@
-import { Clock, Heart } from "lucide-react";
-import Image from "next/image";
+import { Clock, Heart, Sparkles } from "lucide-react";
 import Link from "next/link";
 
+import { CatPhotoCarousel } from "@/components/sections/cat-photo-carousel";
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ export async function FeaturedCatsSection() {
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-blush/60 px-4 py-1.5 text-sm font-semibold text-primary">
-            <Clock className="h-4 w-4" aria-hidden />
+            <Sparkles className="h-4 w-4" aria-hidden />
             {catsForSaleContent.eyebrow}
             <Heart className="h-3.5 w-3.5 fill-accent text-accent" aria-hidden />
           </div>
@@ -58,21 +58,11 @@ export async function FeaturedCatsSection() {
 
 function CatCard({ cat }: { cat: CatListing }) {
   const isComingSoon = cat.status === "coming-soon";
+  const photos = cat.images ?? (cat.image ? [{ image: cat.image, imageAlt: cat.imageAlt ?? cat.name }] : []);
 
   return (
     <article className="w-full max-w-md overflow-hidden rounded-3xl border-2 border-dashed border-border/70 bg-card/80 shadow-soft">
-      {cat.image && (
-        <div className="relative aspect-square w-full bg-muted/25">
-          <Image
-            src={cat.image}
-            alt={cat.imageAlt ?? cat.name}
-            fill
-            quality={95}
-            sizes="(max-width: 448px) 100vw, 448px"
-            className="object-contain p-3"
-          />
-        </div>
-      )}
+      {photos.length > 0 && <CatPhotoCarousel photos={photos} name={cat.name} />}
       <div className="p-6 sm:p-8">
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -82,11 +72,23 @@ function CatCard({ cat }: { cat: CatListing }) {
               {cat.age} · {cat.color}
             </p>
           </div>
-          <Badge variant="muted">
-            <Clock className="mr-1 h-3 w-3" aria-hidden />
-            {isComingSoon ? "Coming soon" : "Available"}
+          <Badge variant={isComingSoon ? "muted" : "default"}>
+            {isComingSoon ? (
+              <>
+                <Clock className="mr-1 h-3 w-3" aria-hidden />
+                Coming soon
+              </>
+            ) : (
+              "Available"
+            )}
           </Badge>
         </div>
+
+        {!isComingSoon && cat.priceGbp != null && (
+          <p className="mt-4 text-2xl font-semibold text-primary">
+            £{cat.priceGbp.toLocaleString("en-GB")}
+          </p>
+        )}
 
         <p className="mt-6 rounded-2xl bg-muted/60 p-4 text-sm leading-relaxed text-muted-foreground">
           {cat.temperament}

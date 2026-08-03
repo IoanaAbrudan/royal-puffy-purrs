@@ -75,6 +75,25 @@ export function toPublicCat(
   cat: CatListingRecord,
   imageVersion: number,
 ): CatListing {
+  const imageSources =
+    cat.images && cat.images.length > 0
+      ? cat.images
+      : cat.imagePath
+        ? [
+            {
+              imagePath: cat.imagePath,
+              imageAlt: cat.imageAlt ?? `${cat.name} — ${cat.breed}`,
+            },
+          ]
+        : [];
+
+  const images = imageSources.map((item) => ({
+    image: `${item.imagePath}?v=${imageVersion}`,
+    imageAlt: item.imageAlt,
+  }));
+
+  const primary = images[0];
+
   return {
     id: cat.id,
     name: cat.name,
@@ -83,10 +102,12 @@ export function toPublicCat(
     temperament: cat.temperament,
     color: cat.color,
     status: cat.status,
-    ...(cat.imagePath
+    priceGbp: cat.priceGbp,
+    ...(primary
       ? {
-          image: `${cat.imagePath}?v=${imageVersion}`,
-          imageAlt: cat.imageAlt ?? `${cat.name} — ${cat.breed}`,
+          image: primary.image,
+          imageAlt: primary.imageAlt,
+          images,
         }
       : {}),
   };
@@ -97,9 +118,54 @@ export async function getCats(): Promise<{
   cats: CatListing[];
 }> {
   const store = await readStore();
+  const cats: CatListing[] = [];
+
+  for (const cat of store.cats) {
+    const imageSources =
+      cat.images && cat.images.length > 0
+        ? cat.images
+        : cat.imagePath
+          ? [
+              {
+                imagePath: cat.imagePath,
+                imageAlt: cat.imageAlt ?? `${cat.name} — ${cat.breed}`,
+              },
+            ]
+          : [];
+
+    const images = [];
+    for (const item of imageSources) {
+      if (await catImageExists(item.imagePath)) {
+        images.push({
+          image: `${item.imagePath}?v=${store.imageVersion}`,
+          imageAlt: item.imageAlt,
+        });
+      }
+    }
+
+    const primary = images[0];
+    cats.push({
+      id: cat.id,
+      name: cat.name,
+      breed: cat.breed,
+      age: cat.age,
+      temperament: cat.temperament,
+      color: cat.color,
+      status: cat.status,
+      priceGbp: cat.priceGbp,
+      ...(primary
+        ? {
+            image: primary.image,
+            imageAlt: primary.imageAlt,
+            images,
+          }
+        : {}),
+    });
+  }
+
   return {
     imageVersion: store.imageVersion,
-    cats: store.cats.map((cat) => toPublicCat(cat, store.imageVersion)),
+    cats,
   };
 }
 

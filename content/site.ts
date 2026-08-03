@@ -102,11 +102,11 @@ export const aboutContent = {
 } as const;
 
 export const catsForSaleContent = {
-  eyebrow: "Coming soon",
+  eyebrow: "Now available",
   title: "Cats for sale",
   description:
-    "Our British Shorthair kittens are still growing in the cattery and are not ready for sale yet. Join the waitlist to be first to know when appointments open.",
-  waitlistCta: { label: "Join the waitlist", href: "/contact?inquiry=sale" },
+    "Meet our lovingly raised British Shorthair kittens. Duchess Mabel is ready for her new home — contact us to arrange a visit.",
+  waitlistCta: { label: "Enquire about a kitten", href: "/contact?inquiry=sale" },
 } as const;
 
 export const privacyContent = {

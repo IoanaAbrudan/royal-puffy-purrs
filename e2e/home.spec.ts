@@ -19,21 +19,28 @@ test("homepage loads with brand and key sections", async ({ page }) => {
     page.getByRole("heading", { name: /Choose your cat's royal room/i }),
   ).toBeVisible();
   await expect(page.getByText(/£30–£35 per day/i)).toBeVisible();
-  await expect(page.getByRole("button", { name: /Previous (room|photo)/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Next (room|photo)/i })).toBeVisible();
+  const hotelSection = page.locator("#cat-hotel");
+  await expect(
+    hotelSection.getByRole("button", { name: /Previous (room|photo)/i }),
+  ).toBeVisible();
+  await expect(
+    hotelSection.getByRole("button", { name: /Next (room|photo)/i }),
+  ).toBeVisible();
   await expect(page.getByRole("link", { name: /Book this suite/i })).toBeVisible();
   await expect(
     page.getByRole("heading", { name: /Cats for sale/i }),
   ).toBeVisible();
-  await expect(page.getByText(/Coming soon/i).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Duchess Mabel/i })).toBeVisible();
+  await expect(page.getByText(/£650/i)).toBeVisible();
 });
 
 test("garden suite photo carousel cycles through images", async ({ page }) => {
   await page.goto("/#cat-hotel");
 
-  await expect(page.getByText("1 / 4")).toBeVisible();
-  await page.getByRole("button", { name: /Next photo/i }).click();
-  await expect(page.getByText("2 / 4")).toBeVisible();
+  const hotelSection = page.locator("#cat-hotel");
+  await expect(hotelSection.getByText("1 / 4")).toBeVisible();
+  await hotelSection.getByRole("button", { name: /Next photo/i }).click();
+  await expect(hotelSection.getByText("2 / 4")).toBeVisible();
 });
 
 test("contact page shows Essex address and validated form", async ({ page }) => {
