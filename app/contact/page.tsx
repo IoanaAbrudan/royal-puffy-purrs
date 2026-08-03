@@ -9,7 +9,7 @@ import { siteConfig } from "@/content/site";
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Book a luxury cat hotel suite or join the waitlist for upcoming kittens at Royal Puffy Purrs.",
+    "Book a luxury cat hotel suite or enquire about our British Shorthair kittens at Royal Puffy Purrs.",
 };
 
 export default function ContactPage() {
@@ -18,7 +18,7 @@ export default function ContactPage() {
       <PageHeader
         eyebrow="Concierge"
         title="We'd love to hear from you"
-        description="Whether you're planning a cat hotel stay or would like to join our kitten waitlist, our team is here to help."
+        description="Whether you're planning a cat hotel stay or enquiring about a kitten, our team is here to help."
       />
       <Container className="py-14 sm:py-16">
         <div className="grid gap-12 lg:grid-cols-2">
@@ -48,8 +48,8 @@ export default function ContactPage() {
               <p className="mt-2">Mon–Sat: 8:00 – 19:00</p>
               <p>Sun: 9:00 – 17:00</p>
               <p className="mt-4">
-                Cattery visits for kittens will open when our first litters are
-                ready — join the waitlist to hear first.
+                Kitten viewings are available by appointment — contact us to meet
+                Duchess Mabel or enquire about future litters.
               </p>
             </div>
           </div>

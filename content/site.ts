@@ -2,7 +2,7 @@ export const siteConfig = {
   name: "Royal Puffy Purrs",
   tagline: "Where every whisker gets the royal treatment",
   description:
-    "A new luxury cat hotel in Basildon, Essex with lovingly raised British Shorthair companions coming soon. Premium boarding under one calm, caring roof.",
+    "A luxury cat hotel in Basildon, Essex with lovingly raised British Shorthair kittens. Premium boarding and ethical breeding under one calm, caring roof.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://royalpuffypurrs.com",
   contact: {
     email: "cattery@royalpuffypurrs.com",
@@ -23,9 +23,9 @@ export const heroContent = {
   eyebrow: "Now open for cat hotel bookings",
   title: "Royal comfort for your purrfect companion",
   description:
-    "A brand-new boutique cattery offering five-star hotel stays for your cat. Our British Shorthair kittens are being raised with care — sales coming soon.",
+    "A boutique cattery offering five-star hotel stays for your cat and lovingly raised British Shorthair kittens — including Duchess Mabel, now available.",
   primaryCta: { label: "Book a Suite", href: "/#cat-hotel" },
-  secondaryCta: { label: "Cats for sale — coming soon", href: "/#cats-for-sale" },
+  secondaryCta: { label: "View cats for sale", href: "/#cats-for-sale" },
   stats: [
     { value: "New", label: "Boutique cattery" },
     { value: "24/7", label: "Feline care" },
@@ -37,7 +37,7 @@ export const servicesContent = {
   eyebrow: "Services",
   title: "What we offer",
   description:
-    "Book a stay for your cat or register interest in our upcoming kittens.",
+    "Book a stay for your cat or enquire about our British Shorthair kittens.",
   items: [
     {
       id: "cat-hotel",
@@ -57,13 +57,13 @@ export const servicesContent = {
       icon: "heart" as const,
       title: "Cats for sale",
       description:
-        "Our first British Shorthair kittens are still growing. Join the waitlist to hear when they are ready.",
+        "Our British Shorthair kittens are raised with care in our Essex cattery. Duchess Mabel is ready for her new home.",
       features: [
         "Raised in our Essex cattery",
-        "Pedigree & health records planned",
-        "Coming soon — not available yet",
+        "Pedigree & health records",
+        "Viewings by appointment",
       ],
-      cta: { label: "Join the waitlist", href: "/contact?inquiry=sale" },
+      cta: { label: "Enquire about a kitten", href: "/contact?inquiry=sale" },
     },
   ],
 } as const;
@@ -71,7 +71,7 @@ export const servicesContent = {
 export const ctaContent = {
   title: "Ready to give your cat the royal treatment?",
   description:
-    "Book a suite for your next trip or join the waitlist for our upcoming kittens. We reply within one business day.",
+    "Book a suite for your next trip or enquire about our kittens. We reply within one business day.",
   primary: { label: "Get in touch", href: "/contact" },
   secondary: { label: "Call us", href: "tel:+447575444336" },
 } as const;
@@ -79,7 +79,7 @@ export const ctaContent = {
 export const aboutContent = {
   title: "A sanctuary built for whiskers and wonder",
   intro:
-    "Royal Puffy Purrs is a new Essex cattery in Basildon built on a simple belief: cats deserve the same care and dignity we expect for ourselves. We are opening our doors for luxury hotel stays while we lovingly raise our first British Shorthair companions.",
+    "Royal Puffy Purrs is an Essex cattery in Basildon built on a simple belief: cats deserve the same care and dignity we expect for ourselves. We offer luxury hotel stays and lovingly raise British Shorthair kittens — with Duchess Mabel now available for sale.",
   values: [
     {
       title: "Gentle expertise",

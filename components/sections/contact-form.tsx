@@ -42,9 +42,9 @@ export function ContactForm() {
     suiteParam && inquiryParam === "hotel"
       ? `I would like to book ${suiteParam}. Please let me know availability and next steps.`
       : catParam && inquiryParam === "sale"
-        ? `I would like to join the waitlist${catParam ? ` for ${catParam}` : ""}.`
+        ? `I would like to enquire about ${catParam}.`
         : inquiryParam === "sale"
-          ? "I would like to join the waitlist for your upcoming kittens."
+          ? "I would like to enquire about your British Shorthair kittens."
           : "";
 
   const {
@@ -172,7 +172,7 @@ export function ContactForm() {
             {...register("inquiryType")}
           >
             <option value="hotel">Cat hotel booking</option>
-            <option value="sale">Cats for sale — waitlist</option>
+            <option value="sale">Cats for sale</option>
             <option value="general">General enquiry</option>
           </select>
           {errors.inquiryType && (
@@ -187,7 +187,7 @@ export function ContactForm() {
         <Label htmlFor="message">Message</Label>
         <Textarea
           id="message"
-          placeholder="Tell us about your cat, preferred hotel dates, or that you'd like to join the kitten waitlist..."
+          placeholder="Tell us about your cat, preferred hotel dates, or which kitten you'd like to enquire about..."
           {...register("message")}
         />
         {errors.message && (
