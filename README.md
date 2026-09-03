@@ -33,16 +33,16 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | TypeScript check |
-| `npm run test` | Unit tests (Vitest) |
-| `npm run test:e2e` | E2E tests (Playwright) |
-| `npm run format` | Format with Prettier |
+| Command             | Description             |
+| ------------------- | ----------------------- |
+| `npm run dev`       | Start dev server        |
+| `npm run build`     | Production build        |
+| `npm run start`     | Start production server |
+| `npm run lint`      | Run ESLint              |
+| `npm run typecheck` | TypeScript check        |
+| `npm run test`      | Unit tests (Vitest)     |
+| `npm run test:e2e`  | E2E tests (Playwright)  |
+| `npm run format`    | Format with Prettier    |
 
 ## Project structure
 
@@ -78,6 +78,9 @@ Optimized for [Vercel](https://vercel.com):
 1. Push to GitHub
 2. Import repo in Vercel
 3. Set `NEXT_PUBLIC_SITE_URL` to your production URL
+4. Set `GOOGLE_SITE_VERIFICATION` to your Search Console verification code (optional)
+
+After deploy, submit `https://your-domain.com/sitemap.xml` in [Google Search Console](https://search.google.com/search-console) and create a [Google Business Profile](https://business.google.com) for local search visibility.
 
 ## License
 

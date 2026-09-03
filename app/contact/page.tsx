@@ -5,12 +5,14 @@ import { Container } from "@/components/layout/container";
 import { ContactForm } from "@/components/sections/contact-form";
 import { PageHeader } from "@/components/sections/page-header";
 import { siteConfig } from "@/content/site";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact",
+export const metadata: Metadata = createPageMetadata({
+  title: "Contact — Cat Hotel & Kitten Enquiries Basildon",
   description:
-    "Book a luxury cat hotel suite or enquire about our British Shorthair kittens at Royal Puffy Purrs.",
-};
+    "Book a luxury cat hotel suite in Basildon or enquire about British Shorthair kittens in Essex. Call Royal Puffy Purrs or send a message online.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
@@ -24,7 +26,7 @@ export default function ContactPage() {
         <div className="grid gap-12 lg:grid-cols-2">
           <div>
             <h2 className="font-display text-2xl font-semibold">Visit us</h2>
-            <address className="mt-4 space-y-2 text-muted-foreground not-italic">
+            <address className="text-muted-foreground mt-4 space-y-2 not-italic">
               <p>{siteConfig.contact.address}</p>
               <p>
                 <a
@@ -43,13 +45,13 @@ export default function ContactPage() {
                 </a>
               </p>
             </address>
-            <div className="mt-8 rounded-xl border border-border bg-secondary/30 p-6 text-sm text-muted-foreground">
-              <p className="font-medium text-foreground">Opening hours</p>
+            <div className="border-border bg-secondary/30 text-muted-foreground mt-8 rounded-xl border p-6 text-sm">
+              <p className="text-foreground font-medium">Opening hours</p>
               <p className="mt-2">Mon–Sat: 8:00 – 19:00</p>
               <p>Sun: 9:00 – 17:00</p>
               <p className="mt-4">
-                Kitten viewings are available by appointment — contact us to meet
-                Duchess Mabel or enquire about future litters.
+                Kitten viewings are available by appointment — contact us to
+                meet Duchess Mabel or enquire about future litters.
               </p>
             </div>
           </div>
@@ -58,7 +60,11 @@ export default function ContactPage() {
               Send a message
             </h2>
             <div className="mt-6">
-              <Suspense fallback={<p className="text-muted-foreground">Loading form…</p>}>
+              <Suspense
+                fallback={
+                  <p className="text-muted-foreground">Loading form…</p>
+                }
+              >
                 <ContactForm />
               </Suspense>
             </div>

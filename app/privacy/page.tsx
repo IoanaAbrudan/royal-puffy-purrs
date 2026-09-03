@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import { Container } from "@/components/layout/container";
 import { PageHeader } from "@/components/sections/page-header";
 import { privacyContent } from "@/content/site";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Privacy Policy",
-  description: "Privacy policy for Royal Puffy Purrs cat hotel and sales services.",
-};
+  description:
+    "Privacy policy for Royal Puffy Purrs cat hotel and kitten sales services in Basildon, Essex.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (
@@ -23,7 +26,7 @@ export default function PrivacyPage() {
               <h2 className="font-display text-xl font-semibold">
                 {section.heading}
               </h2>
-              <p className="mt-3 text-muted-foreground">{section.body}</p>
+              <p className="text-muted-foreground mt-3">{section.body}</p>
             </section>
           ))}
         </div>
