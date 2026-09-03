@@ -3,7 +3,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { PawIcon } from "@/components/ui/cat-decorations";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,10 @@ type SuiteCarouselProps = {
 };
 
 export function SuiteCarousel({ suites }: SuiteCarouselProps) {
-  const [suiteIndex, setSuiteIndex] = useState(0);
-  const [photoIndex, setPhotoIndex] = useState(0);
+  // Suite and photo indices live in one state value so that moving to another
+  // suite always lands on its first photo.
+  const [position, setPosition] = useState({ suite: 0, photo: 0 });
+  const { suite: suiteIndex, photo: photoIndex } = position;
   const suite = suites[suiteIndex];
   const photos = suite?.images ?? [];
   const totalSuites = suites.length;
@@ -31,29 +33,45 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
   const activePhoto = photos[photoIndex] ?? photos[0];
   const usesPhotoCarousel = totalPhotos > 1;
 
-  useEffect(() => {
-    setPhotoIndex(0);
-  }, [suiteIndex]);
+  const showSuite = useCallback((index: number) => {
+    setPosition({ suite: index, photo: 0 });
+  }, []);
+
+  const showPhoto = useCallback((index: number) => {
+    setPosition((current) => ({ ...current, photo: index }));
+  }, []);
 
   const goPrev = useCallback(() => {
-    if (usesPhotoCarousel) {
-      setPhotoIndex((i) => (i === 0 ? totalPhotos - 1 : i - 1));
-      return;
-    }
-    setSuiteIndex((i) => (i === 0 ? totalSuites - 1 : i - 1));
+    setPosition((current) =>
+      usesPhotoCarousel
+        ? {
+            ...current,
+            photo: current.photo === 0 ? totalPhotos - 1 : current.photo - 1,
+          }
+        : {
+            suite: current.suite === 0 ? totalSuites - 1 : current.suite - 1,
+            photo: 0,
+          },
+    );
   }, [totalPhotos, totalSuites, usesPhotoCarousel]);
 
   const goNext = useCallback(() => {
-    if (usesPhotoCarousel) {
-      setPhotoIndex((i) => (i === totalPhotos - 1 ? 0 : i + 1));
-      return;
-    }
-    setSuiteIndex((i) => (i === totalSuites - 1 ? 0 : i + 1));
+    setPosition((current) =>
+      usesPhotoCarousel
+        ? {
+            ...current,
+            photo: current.photo === totalPhotos - 1 ? 0 : current.photo + 1,
+          }
+        : {
+            suite: current.suite === totalSuites - 1 ? 0 : current.suite + 1,
+            photo: 0,
+          },
+    );
   }, [totalPhotos, totalSuites, usesPhotoCarousel]);
 
   if (totalSuites === 0) {
     return (
-      <p className="mt-12 text-center text-muted-foreground">
+      <p className="text-muted-foreground mt-12 text-center">
         Suite photos coming soon.
       </p>
     );
@@ -66,15 +84,15 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
           type="button"
           variant="outline"
           size="icon"
-          className="absolute -left-2 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full border-border/80 bg-card shadow-soft sm:-left-14"
+          className="border-border/80 bg-card shadow-soft absolute top-1/2 -left-2 z-10 h-11 w-11 -translate-y-1/2 rounded-full sm:-left-14"
           aria-label={usesPhotoCarousel ? "Previous photo" : "Previous room"}
           onClick={goPrev}
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
-        <Card className="overflow-hidden border-border/80 shadow-soft-lg">
-          <div className="relative aspect-square w-full overflow-hidden bg-muted/25 sm:aspect-[5/4]">
+        <Card className="border-border/80 shadow-soft-lg overflow-hidden">
+          <div className="bg-muted/25 relative aspect-square w-full overflow-hidden sm:aspect-[5/4]">
             <Image
               key={`${suite.id}-${photoIndex}`}
               src={activePhoto.image}
@@ -86,14 +104,14 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
               style={{ objectPosition: activePhoto.objectPosition }}
               priority={suiteIndex === 0 && photoIndex === 0}
             />
-            <span className="absolute right-3 top-3 rounded-full bg-background/90 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
+            <span className="bg-background/90 text-muted-foreground absolute top-3 right-3 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm">
               {usesPhotoCarousel
                 ? `${photoIndex + 1} / ${totalPhotos}`
                 : `${suiteIndex + 1} / ${totalSuites}`}
             </span>
           </div>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-display text-xl">
+            <CardTitle className="font-display flex items-center gap-2 text-xl">
               <PawIcon size={18} className="text-accent" />
               {suite.title}
             </CardTitle>
@@ -102,10 +120,10 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <ul className="text-muted-foreground space-y-2 text-sm">
               {suite.highlights.map((item) => (
                 <li key={item} className="flex items-start gap-2">
-                  <PawIcon size={14} className="mt-0.5 shrink-0 text-accent" />
+                  <PawIcon size={14} className="text-accent mt-0.5 shrink-0" />
                   {item}
                 </li>
               ))}
@@ -124,7 +142,7 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
           type="button"
           variant="outline"
           size="icon"
-          className="absolute -right-2 top-1/2 z-10 h-11 w-11 -translate-y-1/2 rounded-full border-border/80 bg-card shadow-soft sm:-right-14"
+          className="border-border/80 bg-card shadow-soft absolute top-1/2 -right-2 z-10 h-11 w-11 -translate-y-1/2 rounded-full sm:-right-14"
           aria-label={usesPhotoCarousel ? "Next photo" : "Next room"}
           onClick={goNext}
         >
@@ -142,7 +160,9 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
             key={usesPhotoCarousel ? `${suite.id}-photo-${i}` : suites[i].id}
             type="button"
             role="tab"
-            aria-selected={usesPhotoCarousel ? i === photoIndex : i === suiteIndex}
+            aria-selected={
+              usesPhotoCarousel ? i === photoIndex : i === suiteIndex
+            }
             aria-label={
               usesPhotoCarousel
                 ? `Photo ${i + 1} of ${suite.title}`
@@ -151,12 +171,10 @@ export function SuiteCarousel({ suites }: SuiteCarouselProps) {
             className={cn(
               "h-2.5 rounded-full transition-all",
               (usesPhotoCarousel ? i === photoIndex : i === suiteIndex)
-                ? "w-8 bg-primary"
-                : "w-2.5 bg-border hover:bg-accent",
+                ? "bg-primary w-8"
+                : "bg-border hover:bg-accent w-2.5",
             )}
-            onClick={() =>
-              usesPhotoCarousel ? setPhotoIndex(i) : setSuiteIndex(i)
-            }
+            onClick={() => (usesPhotoCarousel ? showPhoto(i) : showSuite(i))}
           />
         ))}
       </div>
