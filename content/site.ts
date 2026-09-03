@@ -7,7 +7,51 @@ export const siteConfig = {
   contact: {
     email: "cattery@royalpuffypurrs.com",
     phone: "07575 444336",
-    address: "SS13, Basildon",
+    address: "SS13, Basildon, Essex",
+  },
+  seo: {
+    keywords: [
+      "cat hotel Basildon",
+      "luxury cat boarding Essex",
+      "cattery Basildon",
+      "British Shorthair kittens Essex",
+      "cat boarding Basildon",
+      "Royal Puffy Purrs",
+    ],
+    address: {
+      streetAddress: "SS13",
+      locality: "Basildon",
+      region: "Essex",
+      postalCode: "SS13",
+      country: "GB",
+    },
+    areaServed: ["Basildon", "Essex", "Thurrock", "Chelmsford"],
+    openingHours: [
+      {
+        days: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ],
+        opens: "08:00",
+        closes: "19:00",
+      },
+      {
+        days: ["Sunday"],
+        opens: "09:00",
+        closes: "17:00",
+      },
+    ],
+    sameAs: [] as string[],
+    knowsAbout: [
+      "Luxury cat boarding",
+      "British Shorthair kittens",
+      "Cat hotel suites",
+      "Ethical cattery breeding",
+    ],
   },
   logo: {
     src: "/brand/logo.png",
@@ -106,7 +150,10 @@ export const catsForSaleContent = {
   title: "Cats for sale",
   description:
     "Meet our lovingly raised British Shorthair kittens. Duchess Mabel is ready for her new home — contact us to arrange a visit.",
-  waitlistCta: { label: "Enquire about a kitten", href: "/contact?inquiry=sale" },
+  waitlistCta: {
+    label: "Enquire about a kitten",
+    href: "/contact?inquiry=sale",
+  },
 } as const;
 
 export const privacyContent = {
