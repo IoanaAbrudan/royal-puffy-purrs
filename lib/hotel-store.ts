@@ -2,8 +2,6 @@ import { access } from "node:fs/promises";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import sharp from "sharp";
-
 import {
   hotelContent,
   type HotelSuite,
@@ -27,6 +25,13 @@ const BRAND_FILES: Record<BrandImageKey, string> = {
   storefront: "storefront.png",
 };
 
+// sharp is a native module and is only needed when processing an upload.
+// Importing it lazily keeps plain store reads from depending on it loading.
+async function loadSharp() {
+  const { default: sharp } = await import("sharp");
+  return sharp;
+}
+
 function defaultStore(): HotelStoreData {
   return {
     imageVersion: hotelContent.imageVersion,
@@ -38,7 +43,9 @@ function defaultStore(): HotelStoreData {
       imagePath: suite.imagePath,
       imageAlt: suite.imageAlt,
       objectPosition: suite.objectPosition,
-      ...(suite.images ? { images: suite.images.map((image) => ({ ...image })) } : {}),
+      ...(suite.images
+        ? { images: suite.images.map((image) => ({ ...image })) }
+        : {}),
     })),
   };
 }
@@ -177,6 +184,17 @@ export async function getHotelStore(): Promise<HotelStoreData> {
   return readStore();
 }
 
+// Never throws: the seller dashboard renders from bundled defaults rather than
+// failing the whole page when the store cannot be read.
+export async function getHotelStoreSafe(): Promise<HotelStoreData> {
+  try {
+    return await readStore();
+  } catch (error) {
+    console.error("Falling back to bundled hotel defaults", error);
+    return defaultStore();
+  }
+}
+
 export async function updateSuite(
   id: string,
   updates: Partial<Omit<HotelSuiteRecord, "id">>,
@@ -234,6 +252,7 @@ export async function uploadSuiteImage(id: string, file: File) {
   const filename = `${id}.jpg`;
   const outputPath = path.join(HOTEL_DIR, filename);
 
+  const sharp = await loadSharp();
   await sharp(buffer)
     .rotate()
     .resize(2560, 2560, {
@@ -279,6 +298,7 @@ export async function uploadBrandImage(key: BrandImageKey, file: File) {
   const filename = BRAND_FILES[key];
   const outputPath = path.join(BRAND_DIR, filename);
 
+  const sharp = await loadSharp();
   const pipeline = sharp(buffer).rotate();
   if (key === "logo") {
     await pipeline.png({ quality: 92 }).toFile(outputPath);
