@@ -4,11 +4,21 @@ import { cookies } from "next/headers";
 export const SESSION_COOKIE = "admin_session";
 const SESSION_HOURS = 8;
 
+const MIN_SECRET_LENGTH = 16;
+
+export function isSessionSecretConfigured() {
+  if (process.env.NODE_ENV !== "production") return true;
+  const secret = process.env.AUTH_SECRET;
+  return Boolean(secret) && secret!.length >= MIN_SECRET_LENGTH;
+}
+
 function getSecret() {
   const secret = process.env.AUTH_SECRET;
-  if (!secret || secret.length < 16) {
+  if (!secret || secret.length < MIN_SECRET_LENGTH) {
     if (process.env.NODE_ENV === "production") {
-      throw new Error("AUTH_SECRET must be set in production (min 16 characters)");
+      throw new Error(
+        `AUTH_SECRET must be set in production (min ${MIN_SECRET_LENGTH} characters)`,
+      );
     }
     return new TextEncoder().encode("dev-only-auth-secret");
   }
