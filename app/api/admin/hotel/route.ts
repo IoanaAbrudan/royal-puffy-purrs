@@ -17,8 +17,16 @@ const createSchema = z.object({
 });
 
 export async function GET() {
-  const store = await getHotelStore();
-  return NextResponse.json(store);
+  try {
+    const store = await getHotelStore();
+    return NextResponse.json(store);
+  } catch (error) {
+    console.error("GET /api/admin/hotel failed", error);
+    return NextResponse.json(
+      { error: "Could not load hotel data. Please try again." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -39,7 +47,8 @@ export async function POST(request: Request) {
     revalidatePath("/");
     return NextResponse.json({ suite }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not create suite";
+    const message =
+      error instanceof Error ? error.message : "Could not create suite";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
