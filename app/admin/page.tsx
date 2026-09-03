@@ -3,8 +3,8 @@ import { redirect } from "next/navigation";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
 import { Container } from "@/components/layout/container";
 import { getSession } from "@/lib/auth-session";
-import { getCatsStore } from "@/lib/cats-store";
-import { getHotelStore } from "@/lib/hotel-store";
+import { getCatsStoreSafe } from "@/lib/cats-store";
+import { getHotelStoreSafe } from "@/lib/hotel-store";
 
 export const metadata = {
   title: "Admin",
@@ -20,8 +20,8 @@ export default async function AdminPage() {
   }
 
   const [hotelStore, catsStore] = await Promise.all([
-    getHotelStore(),
-    getCatsStore(),
+    getHotelStoreSafe(),
+    getCatsStoreSafe(),
   ]);
 
   return (

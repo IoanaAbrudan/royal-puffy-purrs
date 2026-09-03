@@ -2,8 +2,6 @@ import { access } from "node:fs/promises";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import sharp from "sharp";
-
 import {
   catsContent,
   type CatListing,
@@ -18,6 +16,13 @@ export type CatsStoreData = {
   imageVersion: number;
   cats: CatListingRecord[];
 };
+
+// sharp is a native module and is only needed when processing an upload.
+// Importing it lazily keeps plain store reads from depending on it loading.
+async function loadSharp() {
+  const { default: sharp } = await import("sharp");
+  return sharp;
+}
 
 function defaultStore(): CatsStoreData {
   return {
@@ -173,6 +178,17 @@ export async function getCatsStore(): Promise<CatsStoreData> {
   return readStore();
 }
 
+// Never throws: the seller dashboard renders from bundled defaults rather than
+// failing the whole page when the store cannot be read.
+export async function getCatsStoreSafe(): Promise<CatsStoreData> {
+  try {
+    return await readStore();
+  } catch (error) {
+    console.error("Falling back to bundled cat defaults", error);
+    return defaultStore();
+  }
+}
+
 export async function updateCat(
   id: string,
   updates: Partial<Omit<CatListingRecord, "id">>,
@@ -224,6 +240,7 @@ export async function uploadCatImage(id: string, file: File) {
   const filename = `${id}.jpg`;
   const outputPath = path.join(CATS_DIR, filename);
 
+  const sharp = await loadSharp();
   await sharp(buffer)
     .rotate()
     .resize(2560, 2560, {
@@ -237,7 +254,8 @@ export async function uploadCatImage(id: string, file: File) {
 
   store.cats[index].imagePath = `/cats/${filename}`;
   if (!store.cats[index].imageAlt) {
-    store.cats[index].imageAlt = `${store.cats[index].name} — ${store.cats[index].breed}`;
+    store.cats[index].imageAlt =
+      `${store.cats[index].name} — ${store.cats[index].breed}`;
   }
   store.imageVersion += 1;
   await writeStore(store);

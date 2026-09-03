@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { getCatsStore } from "@/lib/cats-store";
-import { getHotelStore } from "@/lib/hotel-store";
+import { getCatsStore, getCatsStoreSafe } from "@/lib/cats-store";
+import { getHotelStore, getHotelStoreSafe } from "@/lib/hotel-store";
 
 describe("admin stores", () => {
   it("loads hotel suites from bundled defaults", async () => {
@@ -18,5 +18,19 @@ describe("admin stores", () => {
 
     expect(store.cats.length).toBeGreaterThan(0);
     expect(store.cats.some((cat) => cat.id === "duchess-mabel")).toBe(true);
+  });
+
+  it("always returns hotel data for the dashboard", async () => {
+    const store = await getHotelStoreSafe();
+
+    expect(store.suites.length).toBeGreaterThan(0);
+    expect(typeof store.imageVersion).toBe("number");
+  });
+
+  it("always returns cat data for the dashboard", async () => {
+    const store = await getCatsStoreSafe();
+
+    expect(store.cats.length).toBeGreaterThan(0);
+    expect(typeof store.imageVersion).toBe("number");
   });
 });
