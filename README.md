@@ -33,16 +33,16 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start dev server |
-| `npm run build` | Production build |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | TypeScript check |
-| `npm run test` | Unit tests (Vitest) |
-| `npm run test:e2e` | E2E tests (Playwright) |
-| `npm run format` | Format with Prettier |
+| Command             | Description             |
+| ------------------- | ----------------------- |
+| `npm run dev`       | Start dev server        |
+| `npm run build`     | Production build        |
+| `npm run start`     | Start production server |
+| `npm run lint`      | Run ESLint              |
+| `npm run typecheck` | TypeScript check        |
+| `npm run test`      | Unit tests (Vitest)     |
+| `npm run test:e2e`  | E2E tests (Playwright)  |
+| `npm run format`    | Format with Prettier    |
 
 ## Project structure
 
@@ -58,6 +58,28 @@ lib/                  # Utils, env validation
 tests/                # Unit tests
 e2e/                  # Playwright tests
 ```
+
+## Admin sign-in
+
+The seller area lives at `/admin/login`. Credentials come from environment variables, not from the codebase:
+
+| Variable         | Purpose                                                       |
+| ---------------- | ------------------------------------------------------------- |
+| `ADMIN_EMAIL`    | Sign-in email (defaults to `cattery@royalpuffypurrs.com`)     |
+| `ADMIN_PASSWORD` | Sign-in password — no default, sign-in is disabled without it |
+| `AUTH_SECRET`    | Signs the session cookie. Minimum 16 characters in production |
+
+Generate a session secret with `openssl rand -base64 32`.
+
+### Troubleshooting sign-in
+
+| Message                                      | Cause                                                                               | Fix                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Invalid email or password                    | Password does not match `ADMIN_PASSWORD`, or the email does not match `ADMIN_EMAIL` | Re-set the variable, without surrounding quotes or trailing spaces, then redeploy |
+| Sign-in is not configured on the server      | `ADMIN_PASSWORD` or `AUTH_SECRET` is missing or too short                           | Set both variables and redeploy. The server log names the offending variable      |
+| Sign-in succeeds but redirects back to login | Session cookie is `secure` in production and is dropped over plain HTTP             | Access the site over HTTPS                                                        |
+
+Environment variable changes only take effect after a redeploy.
 
 ## Figma integration
 

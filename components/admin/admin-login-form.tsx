@@ -34,7 +34,10 @@ export function AdminLoginForm() {
     }
 
     if (!response.ok) {
-      setError(data.error ?? "Login failed");
+      setError(
+        data.error ??
+          `Sign-in failed (server error ${response.status}). Please contact the site administrator.`,
+      );
       setLoading(false);
       return;
     }
@@ -68,7 +71,7 @@ export function AdminLoginForm() {
         />
       </div>
       {error && (
-        <p className="rounded-xl bg-destructive/10 px-3 py-2 text-sm text-destructive">
+        <p className="bg-destructive/10 text-destructive rounded-xl px-3 py-2 text-sm">
           {error}
         </p>
       )}
