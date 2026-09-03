@@ -19,8 +19,16 @@ const createSchema = z.object({
 });
 
 export async function GET() {
-  const store = await getCatsStore();
-  return NextResponse.json(store);
+  try {
+    const store = await getCatsStore();
+    return NextResponse.json(store);
+  } catch (error) {
+    console.error("GET /api/admin/cats failed", error);
+    return NextResponse.json(
+      { error: "Could not load cats data. Please try again." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -41,7 +49,8 @@ export async function POST(request: Request) {
     revalidatePath("/");
     return NextResponse.json({ cat }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not create cat";
+    const message =
+      error instanceof Error ? error.message : "Could not create cat";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

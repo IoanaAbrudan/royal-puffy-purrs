@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,23 +17,27 @@ import { Textarea } from "@/components/ui/textarea";
 import type { CatsStoreData } from "@/lib/cats-store";
 
 type CatsAdminSectionProps = {
+  initialStore: CatsStoreData;
   onMessage: (message: string | null) => void;
   onError: (error: string | null) => void;
   onUnauthorized: () => void;
 };
 
 export function CatsAdminSection({
+  initialStore,
   onMessage,
   onError,
   onUnauthorized,
 }: CatsAdminSectionProps) {
-  const [store, setStore] = useState<CatsStoreData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [store, setStore] = useState<CatsStoreData>(initialStore);
+  const [loading, setLoading] = useState(false);
 
   const loadStore = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/cats", { credentials: "same-origin" });
+      const response = await fetch("/api/admin/cats", {
+        credentials: "same-origin",
+      });
       if (response.status === 401) {
         onUnauthorized();
         return;
@@ -50,10 +54,6 @@ export function CatsAdminSection({
       setLoading(false);
     }
   }, [onError, onUnauthorized]);
-
-  useEffect(() => {
-    void loadStore();
-  }, [loadStore]);
 
   async function handleCatUpdate(
     id: string,
@@ -167,17 +167,18 @@ export function CatsAdminSection({
     await loadStore();
   }
 
-  if (loading || !store) {
-    return <p className="text-muted-foreground">Loading cats…</p>;
-  }
-
   return (
     <div className="space-y-6">
       <div>
         <h2 className="font-display text-2xl font-semibold">Cats for sale</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           Upload, edit, or delete kitten photos and listings.
         </p>
+        {loading && (
+          <p className="text-muted-foreground mt-2 text-sm">
+            Refreshing listings…
+          </p>
+        )}
       </div>
 
       <Card>
@@ -191,7 +192,12 @@ export function CatsAdminSection({
           >
             <div className="space-y-2">
               <Label htmlFor="cat-id">ID (slug)</Label>
-              <Input id="cat-id" name="id" placeholder="prince-oliver" required />
+              <Input
+                id="cat-id"
+                name="id"
+                placeholder="prince-oliver"
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cat-name">Name</Label>
@@ -199,7 +205,12 @@ export function CatsAdminSection({
             </div>
             <div className="space-y-2">
               <Label htmlFor="cat-breed">Breed</Label>
-              <Input id="cat-breed" name="breed" defaultValue="British Shorthair" required />
+              <Input
+                id="cat-breed"
+                name="breed"
+                defaultValue="British Shorthair"
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cat-age">Age</Label>
@@ -215,7 +226,7 @@ export function CatsAdminSection({
                 id="cat-status"
                 name="status"
                 defaultValue="coming-soon"
-                className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+                className="border-input bg-background flex h-10 w-full rounded-xl border px-3 py-2 text-sm"
               >
                 <option value="coming-soon">Coming soon</option>
                 <option value="available">Available</option>
@@ -223,7 +234,12 @@ export function CatsAdminSection({
             </div>
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="cat-temperament">Temperament</Label>
-              <Textarea id="cat-temperament" name="temperament" required rows={3} />
+              <Textarea
+                id="cat-temperament"
+                name="temperament"
+                required
+                rows={3}
+              />
             </div>
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="cat-alt">Image alt text (optional)</Label>
@@ -237,7 +253,7 @@ export function CatsAdminSection({
       </Card>
 
       {store.cats.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No cat listings yet.</p>
+        <p className="text-muted-foreground text-sm">No cat listings yet.</p>
       ) : (
         store.cats.map((cat) => (
           <CatEditor
@@ -297,7 +313,7 @@ function CatEditor({
       </CardHeader>
       <CardContent className="grid gap-6 lg:grid-cols-[240px_1fr]">
         <div className="space-y-3">
-          <div className="relative aspect-square overflow-hidden rounded-xl bg-muted">
+          <div className="bg-muted relative aspect-square overflow-hidden rounded-xl">
             {cat.imagePath ? (
               <Image
                 src={`${cat.imagePath}?v=${imageVersion}`}
@@ -307,7 +323,7 @@ function CatEditor({
                 unoptimized
               />
             ) : (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
                 No photo yet
               </div>
             )}
@@ -368,7 +384,7 @@ function CatEditor({
               onChange={(e) =>
                 setStatus(e.target.value as "coming-soon" | "available")
               }
-              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm"
+              className="border-input bg-background flex h-10 w-full rounded-xl border px-3 py-2 text-sm"
             >
               <option value="coming-soon">Coming soon</option>
               <option value="available">Available</option>
@@ -384,7 +400,10 @@ function CatEditor({
           </div>
           <div className="space-y-2">
             <Label>Image alt text</Label>
-            <Input value={imageAlt} onChange={(e) => setImageAlt(e.target.value)} />
+            <Input
+              value={imageAlt}
+              onChange={(e) => setImageAlt(e.target.value)}
+            />
           </div>
           <Button
             type="button"

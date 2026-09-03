@@ -8,7 +8,9 @@ test.describe("Admin", () => {
     await page.goto("/admin");
 
     await expect(page).toHaveURL(/\/admin\/login/);
-    await expect(page.getByRole("heading", { name: /Seller login/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Seller login/i }),
+    ).toBeVisible();
   });
 
   test("rejects invalid credentials", async ({ page }) => {
@@ -34,8 +36,15 @@ test.describe("Admin", () => {
     await expect(
       page.getByRole("heading", { name: /Picture manager/i }),
     ).toBeVisible();
-    await expect(page.getByRole("heading", { name: /Brand images/i })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /Hotel suites/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Brand images/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Hotel suites/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /Cats for sale/i }),
+    ).toBeVisible();
     await expect(page.getByRole("button", { name: /Sign out/i })).toBeVisible();
   });
 

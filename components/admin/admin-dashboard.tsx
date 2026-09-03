@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { CatsAdminSection } from "@/components/admin/cats-admin-section";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { CatsStoreData } from "@/lib/cats-store";
 import type { HotelStoreData } from "@/lib/hotel-store";
 
-export function AdminDashboard() {
+export function AdminDashboard({
+  initialHotelStore,
+  initialCatsStore,
+}: {
+  initialHotelStore: HotelStoreData;
+  initialCatsStore: CatsStoreData;
+}) {
   const router = useRouter();
-  const [store, setStore] = useState<HotelStoreData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [store, setStore] = useState<HotelStoreData>(initialHotelStore);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,13 +36,17 @@ export function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/admin/hotel", { credentials: "same-origin" });
+      const response = await fetch("/api/admin/hotel", {
+        credentials: "same-origin",
+      });
       if (response.status === 401) {
         router.push("/admin/login");
         return;
       }
       if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as { error?: string };
+        const data = (await response.json().catch(() => ({}))) as {
+          error?: string;
+        };
         setError(data.error ?? "Could not load admin data. Please try again.");
         return;
       }
@@ -48,12 +59,11 @@ export function AdminDashboard() {
     }
   }, [router]);
 
-  useEffect(() => {
-    void loadStore();
-  }, [loadStore]);
-
   async function handleLogout() {
-    await fetch("/api/admin/logout", { method: "POST", credentials: "same-origin" });
+    await fetch("/api/admin/logout", {
+      method: "POST",
+      credentials: "same-origin",
+    });
     router.push("/admin/login");
     router.refresh();
   }
@@ -195,29 +205,14 @@ export function AdminDashboard() {
     await loadStore();
   }
 
-  if (loading) {
-    return <p className="text-muted-foreground">Loading admin…</p>;
-  }
-
-  if (!store) {
-    return (
-      <div className="space-y-4">
-        <p className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {error ?? "Could not load admin data. Please try again."}
-        </p>
-        <Button variant="outline" onClick={() => void loadStore()}>
-          Retry
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold">Picture manager</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="font-display text-3xl font-semibold">
+            Picture manager
+          </h1>
+          <p className="text-muted-foreground mt-1">
             Upload, edit, or delete hotel, brand, and cats for sale photos.
           </p>
         </div>
@@ -226,6 +221,9 @@ export function AdminDashboard() {
         </Button>
       </div>
 
+      {loading && (
+        <p className="text-muted-foreground text-sm">Refreshing admin data…</p>
+      )}
       {(message || error) && (
         <p
           className={`rounded-xl px-4 py-3 text-sm ${
@@ -245,9 +243,12 @@ export function AdminDashboard() {
         </CardHeader>
         <CardContent className="grid gap-6 sm:grid-cols-2">
           {(["logo", "storefront"] as const).map((key) => (
-            <div key={key} className="space-y-3 rounded-2xl border border-border p-4">
+            <div
+              key={key}
+              className="border-border space-y-3 rounded-2xl border p-4"
+            >
               <p className="text-sm font-medium capitalize">{key}</p>
-              <div className="relative aspect-video overflow-hidden rounded-xl bg-muted">
+              <div className="bg-muted relative aspect-video overflow-hidden rounded-xl">
                 <Image
                   src={`/brand/${key === "logo" ? "logo.png" : "storefront.png"}?v=${store.imageVersion}`}
                   alt={key}
@@ -274,10 +275,18 @@ export function AdminDashboard() {
           <CardTitle>Add new suite</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={(event) => void handleCreateSuite(event)} className="grid gap-4 sm:grid-cols-2">
+          <form
+            onSubmit={(event) => void handleCreateSuite(event)}
+            className="grid gap-4 sm:grid-cols-2"
+          >
             <div className="space-y-2">
               <Label htmlFor="new-id">ID (slug)</Label>
-              <Input id="new-id" name="id" placeholder="sunset-suite" required />
+              <Input
+                id="new-id"
+                name="id"
+                placeholder="sunset-suite"
+                required
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="new-title">Title</Label>
@@ -285,7 +294,12 @@ export function AdminDashboard() {
             </div>
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="new-description">Description</Label>
-              <Textarea id="new-description" name="description" required rows={3} />
+              <Textarea
+                id="new-description"
+                name="description"
+                required
+                rows={3}
+              />
             </div>
             <div className="space-y-2 sm:col-span-2">
               <Label htmlFor="new-highlights">Highlights (one per line)</Label>
@@ -297,7 +311,11 @@ export function AdminDashboard() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="new-position">Object position</Label>
-              <Input id="new-position" name="objectPosition" defaultValue="center" />
+              <Input
+                id="new-position"
+                name="objectPosition"
+                defaultValue="center"
+              />
             </div>
             <div className="sm:col-span-2">
               <Button type="submit">Create suite</Button>
@@ -322,6 +340,7 @@ export function AdminDashboard() {
       </div>
 
       <CatsAdminSection
+        initialStore={initialCatsStore}
         onMessage={setMessage}
         onError={setError}
         onUnauthorized={() => router.push("/admin/login")}
@@ -368,7 +387,7 @@ function SuiteEditor({
       </CardHeader>
       <CardContent className="grid gap-6 lg:grid-cols-[240px_1fr]">
         <div className="space-y-3">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-muted">
+          <div className="bg-muted relative aspect-[4/3] overflow-hidden rounded-xl">
             <Image
               src={`${suite.imagePath}?v=${imageVersion}`}
               alt={suite.imageAlt}
@@ -429,7 +448,10 @@ function SuiteEditor({
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label>Image alt text</Label>
-              <Input value={imageAlt} onChange={(e) => setImageAlt(e.target.value)} />
+              <Input
+                value={imageAlt}
+                onChange={(e) => setImageAlt(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Object position</Label>
